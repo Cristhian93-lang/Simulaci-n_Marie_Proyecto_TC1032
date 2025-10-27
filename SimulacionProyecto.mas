@@ -1,0 +1,117 @@
+/ Simulación de Enfriamiento Dinámico
+/ Equipo: ThermoFlow
+/ Integrantes:
+/ * Cristhian Viery Maida Suarez - A01668790
+/ * Raúl Alejabdro Momox Chávez - A01707900
+/ * Iker Rodríguez Amaro - A01712814
+/ * Gerarado Martínez Carbajal - A01713474
+/ -INPUT: VelocidadMaxima (ej. 100)
+/ -OUTPUT (por cada iteración):
+/   1. VelocidadActual
+/   2. TemperaturaActual
+/   3. EstadoVentilador (0, 1, 2, 3)
+
+/ --- INICIALIZACIÓN ---
+						Input
+						Store VelocidadMaxima     / Guardar el límite del bucle
+						
+						Load TempBase
+						Store TemperaturaActual   / Establecer la temp inicial
+						
+						Load Cero
+						Store VelocidadActual     / Empezar la velocidad en 0
+
+/ --- BUCLE PRINCIPAL DE SIMULACIÓN ---
+/ Comprueba si VelocidadActual >= VelocidadMaxima
+BucleSim,               Load VelocidadActual
+						Subt VelocidadMaxima
+						Skipcond 800              / Si AC >= 0 (Velo >= VeloMax), saltar y terminar
+						Jump BucleContenido       / Si AC < 0 (Velo < VeloMax), continuar simulación
+						Jump FinSimulacion        / Saltar aquí para terminar
+
+/ --- CONTENIDO DEL BUCLE ---
+BucleContenido, 	    Load VelocidadActual
+						Add IncrementoVelo        / Aumentar la velocidad
+						Store VelocidadActual
+	
+						/ Verifica si la velocidad superó el máximo
+						Load VelocidadActual
+						Subt VelocidadMaxima
+						Skipcond 800              / Si AC >= 0 (ya llegó o pasó el máximo), terminar
+						Jump ContinuarSimulacion  / Si AC < 0, seguir con la simulación
+						Jump FinSimulacion        / Detener si alcanzó el máximo
+
+/ --- ACTUALIZACIÓN DE TEMPERATURA ---
+ContinuarSimulacion,    Load TemperaturaActual
+						Add IncrementoTemp        / Aumentar la temperatura
+						Store TemperaturaActual
+	
+/ --- LÓGICA DEL VENTILADOR (4 NIVELES) ---
+/ Revisa la temperatura actual y guarda el estado (0-3)
+/ en la variable 'EstadoVentilador'
+	
+					    Load TemperaturaActual
+						Subt T_Alarma             / (Temp - 100)
+						Skipcond 800              / Si >= 100, ir a Nivel 3
+						Jump CheckRapido
+						Load S_Alarma             / Nivel 3: Alarma
+						Store EstadoVentilador
+						Jump FinChequeo
+
+CheckRapido, 		    Load TemperaturaActual
+						Subt T_Rapido             / (Temp - 95)
+						Skipcond 800              / Si >= 95, ir a Nivel 2
+						Jump CheckLento
+						Load S_Rapido             / Nivel 2: Rápido
+						Store EstadoVentilador
+						Jump FinChequeo
+	
+CheckLento, 		    Load TemperaturaActual
+					 	Subt T_Lento              / (Temp - 90)
+						Skipcond 800              / Si >= 90, ir a Nivel 1
+						Jump CheckApagado
+						Load S_Lento              / Nivel 1: Lento
+						Store EstadoVentilador
+						Jump FinChequeo
+	
+CheckApagado, 		    Load S_Apagado            / Nivel 0: Apagado
+						Store EstadoVentilador
+
+/ --- SALIDA DE DATOS (BLOQUE DE 3) ---
+FinChequeo, 		    Load VelocidadActual
+						Output                    / 1. Velocidad
+						
+						Load TemperaturaActual
+						Output                    / 2. Temperatura
+						
+						Load EstadoVentilador
+						Output                    / 3. Estado del Ventilador
+						
+						Jump BucleSim             / Volver al inicio del bucle
+
+
+/ --- FIN ---
+FinSimulacion, 		    Halt
+
+/ --- VARIABLES Y CONSTANTES ---
+VelocidadMaxima,        Dec 0
+VelocidadActual,        Dec 0
+TemperaturaActual,      Dec 0
+EstadoVentilador,       Dec 0
+
+/ Constantes de simulación
+TempBase,               Dec 70          / Temperatura inicial del motor
+IncrementoVelo,         Dec 10
+IncrementoTemp,         Dec 2
+
+/ Constantes de estado del ventilador
+T_Alarma,               Dec 100         / Límite para alarma
+T_Rapido,               Dec 95          / Límite para ventilador rápido
+T_Lento,                Dec 90           / Límite para ventilador lento
+S_Apagado,              Dec 0
+S_Lento,                Dec 1
+S_Rapido,               Dec 2
+S_Alarma,               Dec 3
+
+/ Utilidad
+Cero,                   Dec 0
