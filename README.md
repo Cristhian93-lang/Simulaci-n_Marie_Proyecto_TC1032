@@ -65,10 +65,11 @@ El objetivo del proyecto es modelar el control automático de la temperatura del
 ## Lógica de Control del Ventilador
 
 El control se basa en comparaciones (`Subt`) y condiciones (`Skipcond 800`):
-Si TemperaturaActual ≥ 100 → Estado = 3 (Alarma)
-Si TemperaturaActual ≥ 95 → Estado = 2 (Rápido)
-Si TemperaturaActual ≥ 90 → Estado = 1 (Lento)
-Si TemperaturaActual < 90 → Estado = 0 (Apagado)
+
+- Si TemperaturaActual ≥ 100 → Estado = 3 (Alarma)
+- Si TemperaturaActual ≥ 95 → Estado = 2 (Rápido)
+- Si TemperaturaActual ≥ 90 → Estado = 1 (Lento)
+- Si TemperaturaActual < 90 → Estado = 0 (Apagado)
 
 
 De esta manera, el programa simula cómo el sistema de enfriamiento automotriz responde de forma escalonada a las condiciones térmicas del motor.
@@ -101,18 +102,20 @@ De esta manera, el programa simula cómo el sistema de enfriamiento automotriz r
 
 ## Ejemplo de Salida
 
-Input: 100
-Output:
-Velocidad: 10 Temperatura: 72 Estado: 0
-Velocidad: 20 Temperatura: 74 Estado: 0
-Velocidad: 30 Temperatura: 76 Estado: 0
-Velocidad: 40 Temperatura: 78 Estado: 0
-Velocidad: 50 Temperatura: 80 Estado: 0
-Velocidad: 60 Temperatura: 82 Estado: 0
-Velocidad: 70 Temperatura: 84 Estado: 0
-Velocidad: 80 Temperatura: 86 Estado: 0
-Velocidad: 90 Temperatura: 88 Estado: 1
-Velocidad: 100 Temperatura: 90 Estado: 1
+- Input: 100
+
+- Output:
+  
+- Velocidad: 10 Temperatura: 72 Estado: 0
+- Velocidad: 20 Temperatura: 74 Estado: 0
+- Velocidad: 30 Temperatura: 76 Estado: 0
+- Velocidad: 40 Temperatura: 78 Estado: 0
+- Velocidad: 50 Temperatura: 80 Estado: 0
+- Velocidad: 60 Temperatura: 82 Estado: 0
+- Velocidad: 70 Temperatura: 84 Estado: 0
+- Velocidad: 80 Temperatura: 86 Estado: 0
+- Velocidad: 90 Temperatura: 88 Estado: 1
+- Velocidad: 100 Temperatura: 90 Estado: 1
 
 ## Conceptos de Arquitectura MARIE aplicados
 
